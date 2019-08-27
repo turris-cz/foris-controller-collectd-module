@@ -1,0 +1,80 @@
+{
+    "definitions": {
+        "record_values": {
+            "type": "object",
+            "properties": {
+                "key": {"type": "string"},
+                "value": {"type": "number"}
+            },
+            "required": ["key", "value"],
+            "additionalProperties": false
+        },
+        "record": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "values": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/record_values"}
+                }
+            },
+            "required": ["name", "values"],
+            "additionalProperties": false
+        },
+        "slice": {
+            "type": "object",
+            "properties": {
+                "timestamp": {"type": "number"},
+                "records": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/record"}
+                }
+            },
+            "required": ["timestamp", "records"],
+            "additionalProperties": false
+        }
+    },
+    "oneOf": [
+        {
+            "description": "Request to list current data",
+            "properties": {
+                "module": {"enum": ["collectd"]},
+                "kind": {"enum": ["request"]},
+                "action": {"enum": ["list"]}
+            },
+            "additionalProperties": false
+        },
+        {
+            "description": "Reply to list current data",
+            "properties": {
+                "module": {"enum": ["collectd"]},
+                "kind": {"enum": ["reply"]},
+                "action": {"enum": ["list"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "slices": {
+                            "type": "array",
+                            "items": {"$ref": "#/definitions/slice"}
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["slices"]
+                }
+            },
+            "additionalProperties": false,
+            "required": ["data"]
+        },
+        {
+            "description": "That a new data slice has arrived",
+            "properties": {
+                "module": {"enum": ["collectd"]},
+                "kind": {"enum": ["notification"]},
+                "action": {"enum": ["new_slice"]},
+                "data": {"$ref": "#/definitions/slice"}
+            },
+            "additionalProperties": false,
+            "required": ["data"]
+        }
+    ]
+}
