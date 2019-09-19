@@ -1,4 +1,4 @@
-0.0 (YYYY-MM-DD)
+0.1 (2019-09-19)
 ----------------
 
-* some change
+* initial version which shows cpu usage
