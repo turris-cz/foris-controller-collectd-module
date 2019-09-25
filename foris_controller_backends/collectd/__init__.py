@@ -53,7 +53,10 @@ class Slices:
 
 
 class Collectd:
-    EXPORTABLES = [(r"[^/]*/(cpu-\d+)/percent-active", ["value"])]
+    EXPORTABLES = [
+        (r"[^/]*/(cpu-\d+)/percent-active", ["value"]),
+        (r"[^/]*/memory/(memory-\w+)", ["value"]),
+    ]
 
     def __init__(self, slices: Slices):
         self.latest: typing.List[typing.Tuple[str, str]] = []

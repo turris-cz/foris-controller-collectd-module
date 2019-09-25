@@ -156,7 +156,7 @@ def test_new_slice_announcements(mosquitto_test, start_buses, infrastructure, fo
     assert round(timestamp2 - timestamp1, 0) >= 2.0  # there is 2s delay in announcer
 
     records = functools.reduce(lambda x, y: x + y["data"]["records"], notifications, [])
-    for name, required_values in [("cpu", {"value"})]:
+    for name, required_values in [("cpu", {"value"}), ("memory", {"value"})]:
         filtered_records = [e for e in records if e["name"].startswith(name)]
         assert len(filtered_records) > 0
         for record in filtered_records:
