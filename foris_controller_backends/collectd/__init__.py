@@ -24,9 +24,9 @@ import os
 import re
 import socket
 import typing
-import io
 
 from foris_controller.app import app_info
+from foris_controller_backends.networks import NetworksCmd
 from foris_controller.utils import RWLock
 
 logger = logging.getLogger(__name__)
@@ -53,17 +53,36 @@ class Slices:
 
 
 class Collectd:
-    EXPORTABLES = [
-        (r"[^/]*/(cpu-\d+)/percent-active", ["value"]),
-        (r"[^/]*/memory/(memory-\w+)", ["value"]),
-    ]
-
     def __init__(self, slices: Slices):
         self.latest: typing.List[typing.Tuple[str, str]] = []
         socket_path = os.environ.get("FC_COLLECTD_PATH", "/var/run/follectd.sock")
         self.socket_path = socket_path
         self.slices = slices
         self.lock: app_info["lock_backend"].Lock = app_info["lock_backend"].Lock()
+
+        network_cmds = NetworksCmd()
+
+        def get_network_info(network):
+            data = network_cmds.get_network_info("wan")
+            if not data:
+                return ""
+            return data.get("device", "")
+
+        self.interface_map: typing.Dict[str, str] = {
+            "lan": get_network_info("lan"),
+            "wan": get_network_info("wan"),
+            "guest": get_network_info("guest_turris"),
+        }
+
+        self.exportables = [
+            (r"[^/]*/(cpu-\d+)/percent-active", ["value"], None),
+            (r"[^/]*/memory/(memory-\w+)", ["value"], None),
+        ]
+
+        # append interfaces
+        for k, v in [(k, v) for k, v in self.interface_map.items() if len(v) > 0]:
+            self.exportables.append((f"[^/]*/interface-{v}/if_packets", ["rx", "tx"], k))
+        print(self.exportables)
 
     def _write_read_socket(self, sock: socket.socket, input_data: str) -> str:
         sock.sendall(input_data)
@@ -142,10 +161,10 @@ class Collectd:
                 # query only exportables
                 queries: typing.Tuple["string", "string", typing.List[str]] = []
                 for key in to_query:
-                    for regex, values in Collectd.EXPORTABLES:
+                    for regex, values, custom_name in self.exportables:
                         match = re.match(regex, key)
                         if match:
-                            queries.append((match.group(1), key, values))
+                            queries.append((custom_name or match.group(1), key, values))
 
                 # perform actual queries
                 res_records: list[dict] = []
