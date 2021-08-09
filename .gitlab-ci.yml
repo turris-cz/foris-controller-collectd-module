@@ -17,6 +17,6 @@ stages:
     - python setup.py test --addopts="--backend openwrt --backend mock --message-bus mqtt"
 
 test_python3:
-  image: registry.labs.nic.cz/turris/foris-ci/python3
+  image: registry.nic.cz/turris/foris-ci/python3
   stage: test
   <<: *run_script
