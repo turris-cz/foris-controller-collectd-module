@@ -42,9 +42,7 @@ setup(
     namespace_packages=["foris_controller_modules", "foris_controller_backends"],
     description=DESCRIPTION,
     long_description=open("README.rst").read(),
-    install_requires=[
-        "foris-controller @ git+https://gitlab.nic.cz/turris/foris-controller/foris-controller.git"
-    ],
+    install_requires=["foris-controller"],
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "foris-controller-testtools", "foris-client", "ubus", "paho-mqtt"],
     entry_points={
@@ -52,10 +50,6 @@ setup(
             "collectd = foris_controller_collectd_module.announcer:make_data_message"
         ]
     },
-    dependency_links=[
-        "git+https://gitlab.nic.cz/turris/foris-controller/foris-controller-testtools.git#egg=foris-controller-testtools",
-        "git+https://gitlab.nic.cz/turris/foris-controller/foris-client.git#egg=foris-client",
-    ],
     include_package_data=True,
     zip_safe=False,
 )

@@ -58,7 +58,7 @@ class Collectd:
         socket_path = os.environ.get("FC_COLLECTD_PATH", "/var/run/follectd.sock")
         self.socket_path = socket_path
         self.slices = slices
-        self.lock: app_info["lock_backend"].Lock = app_info["lock_backend"].Lock()
+        self.lock: app_info["lock_backend"].Lock = app_info["lock_backend"].Lock()  # noqa
 
         network_cmds = NetworksCmd()
 
@@ -159,7 +159,7 @@ class Collectd:
                 self.latest = listval
 
                 # query only exportables
-                queries: typing.Tuple["string", "string", typing.List[str]] = []
+                queries: typing.Tuple[str, str, typing.List[str]] = []
                 for key in to_query:
                     for regex, values, custom_name in self.exportables:
                         match = re.match(regex, key)
