@@ -1,6 +1,6 @@
 #
 # foris-controller-collectd-module
-# Copyright (C) 2019 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (C) 2023 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,22 +20,8 @@
 import functools
 import pathlib
 import pytest
-import shutil
 import subprocess
 import time
-
-from foris_controller_testtools.fixtures import (
-    only_message_buses,
-    only_backends,
-    backend,
-    infrastructure,
-    start_buses,
-    mosquitto_test,
-    ubusd_test,
-    notify_api,
-    file_root_init,
-    FILE_ROOT_PATH,
-)
 
 
 @pytest.fixture(scope="session")
