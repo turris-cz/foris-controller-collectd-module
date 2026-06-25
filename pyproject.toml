@@ -30,6 +30,9 @@ ubus = [
     "ubus",
 ]
 
+[project.entry-points.foris_controller_modules]
+collectd = "foris_controller_modules.collectd"
+
 [project.entry-points.foris_controller_announcer]
 collectd = "foris_controller_collectd_module.announcer:make_data_message"
 
